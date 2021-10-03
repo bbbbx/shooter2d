@@ -3,6 +3,7 @@ emcc \
     src/input.c \
     src/draw.c \
     src/init.c \
+    src/stage.c \
     --preload-file gfx/player.png \
     --preload-file gfx/playerBullet.png \
     --preload-file gfx/enemy.png \

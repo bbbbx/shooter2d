@@ -1,24 +1,34 @@
+#pragma once
+
+typedef struct {
+    void (*logic)(void);
+    void (*draw)(void);
+} Delegate;
+
 typedef struct {
     SDL_Renderer *renderer;
     SDL_Window *window;
 
-    // These variables will track our movement requests.
-    int up;
-    int down;
-    int left;
-    int right;
-
-    int fire;
+    Delegate delegate;
+    int keyboard[MAX_KEYBOARD_KEYS];
 } App;
 
-typedef struct
+struct Entity
 {
     int x;
     int y;
+    int w;
+    int h;
     SDL_Texture *texture;
 
     int dx;
     int dy;
     int health;
-} Entity;
+    int reload;
+    struct Entity *next;
+};
 
+typedef struct {
+    struct Entity fighterHead, *fighterTail;
+    struct Entity bulletHead, *bulletTail;
+} Stage;
