@@ -12,6 +12,7 @@ if(SDL2_FOUND)
         src/input.c
         src/draw.c
         src/stage.c
+        src/utils.c
     )
     target_link_libraries(main ${SDL2_LIBRARIES})
 endif()

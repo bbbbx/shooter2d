@@ -6,6 +6,25 @@ static SDL_Texture *enemyTexture;
 
 int enemySpawnTimer;
 
+static int bulletHitFighter(struct Entity *bullet)
+{
+    struct Entity *fighter;
+
+    for (fighter = stage.fighterHead.next; fighter != NULL; fighter = fighter->next)
+    {
+        if (
+            fighter->side != bullet->side &&
+            collision(bullet->x, bullet->y, bullet->w, bullet->h, fighter->x, fighter->y, fighter->w, fighter->h))
+        {
+            bullet->health = 0;
+            fighter->health = 0;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 static void initPlayer()
 {
     player = malloc(sizeof(struct Entity));
@@ -18,6 +37,8 @@ static void initPlayer()
     player->y = 100;
     player->texture = loadTexture((char*)"gfx/player.png");
     SDL_QueryTexture(player->texture, NULL, NULL, &player->w, &player->h);
+
+    player->side = SIDE_PLAYER;
 }
 
 static void fireBullet()
@@ -39,7 +60,34 @@ static void fireBullet()
 
     bullet->y += (player->h / 2) - (bullet->h / 2);
 
+    bullet->side = SIDE_PLAYER;
+
     player->reload = 8;
+}
+
+static void spawnEnemies()
+{
+    struct Entity *enemy;
+
+    if (--enemySpawnTimer <= 0)
+    {
+        enemy = malloc(sizeof(struct Entity));
+        memset(enemy, 0, sizeof(struct Entity));
+        stage.fighterTail->next = enemy;
+        stage.fighterTail = enemy;
+
+        enemy->x = SCREEN_WIDTH;
+        enemy->y = rand() % SCREEN_HEIGHT;
+        enemy->texture = enemyTexture;
+        SDL_QueryTexture(enemy->texture, NULL, NULL, &enemy->w, &enemy->h);
+
+        enemy->dx = -(2 + (rand() % 4));
+
+        enemy->side = SIDE_ENEMY;
+        enemy->health = 1;
+
+        enemySpawnTimer = 30 + (rand() % 60);
+    }
 }
 
 static void drawBullets()
@@ -115,7 +163,7 @@ static void doBullets()
         b->x += b->dx;
         b->y += b->dy;
 
-        if (b->x > SCREEN_WIDTH)
+        if (b->x > SCREEN_WIDTH || bulletHitFighter(b))
         {
             if (b == stage.bulletTail)
             {
@@ -131,9 +179,11 @@ static void doBullets()
     }
 }
 
-static void doFighers()
+static void doFighters()
 {
     struct Entity *e, *prev;
+
+    prev = &stage.fighterHead;
 
     for (e = stage.fighterHead.next; e != NULL; e = e->next)
     {
@@ -141,7 +191,7 @@ static void doFighers()
         e->y += e->dy;
 
         // enemy out of screen
-        if (e != player && e->x < -e->w)
+        if (e != player && (e->x < -e->w || e->health == 0))
         {
             if (e == stage.fighterTail)
             {
@@ -157,33 +207,11 @@ static void doFighers()
     }
 }
 
-static void spawnEnemies()
-{
-    struct Entity *enemy;
-
-    if (--enemySpawnTimer <= 0)
-    {
-        enemy = malloc(sizeof(struct Entity));
-        memset(enemy, 0, sizeof(struct Entity));
-        stage.fighterTail->next = enemy;
-        stage.fighterTail = enemy;
-
-        enemy->x = SCREEN_WIDTH;
-        enemy->y = rand() % SCREEN_HEIGHT;
-        enemy->texture = enemyTexture;
-        SDL_QueryTexture(enemy->texture, NULL, NULL, &enemy->w, &enemy->h);
-
-        enemy->dx = -(2 + (rand() % 4));
-
-        enemySpawnTimer = 30 + (rand() % 60);
-    }
-}
-
 static void logic()
 {
     doPlayer();
 
-    doFighers();
+    doFighters();
 
     doBullets();
 

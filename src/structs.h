@@ -26,6 +26,8 @@ struct Entity
     int health;
     int reload;
     struct Entity *next;
+
+    int side;
 };
 
 typedef struct {
