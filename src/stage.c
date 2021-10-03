@@ -2,6 +2,9 @@
 
 static struct Entity *player;
 static SDL_Texture *bulletTexture;
+static SDL_Texture *enemyTexture;
+
+int enemySpawnTimer;
 
 static void initPlayer()
 {
@@ -39,11 +42,6 @@ static void fireBullet()
     player->reload = 8;
 }
 
-static void drawPlayer()
-{
-    blit(player->texture, player->x, player->y);
-}
-
 static void drawBullets()
 {
     struct Entity *b;
@@ -54,11 +52,21 @@ static void drawBullets()
     }
 }
 
+static void drawFighters()
+{
+    struct Entity *e;
+
+    for (e = stage.fighterHead.next; e != NULL; e = e->next)
+    {
+        blit(e->texture, e->x, e->y);
+    }
+}
+
 static void draw()
 {
-    drawPlayer();
-
     drawBullets();
+
+    drawFighters();
 }
 
 static void doPlayer()
@@ -94,9 +102,6 @@ static void doPlayer()
     {
         fireBullet();
     }
-
-    player->x += player->dx;
-    player->y += player->dy;
 }
 
 static void doBullets()
@@ -126,10 +131,63 @@ static void doBullets()
     }
 }
 
+static void doFighers()
+{
+    struct Entity *e, *prev;
+
+    for (e = stage.fighterHead.next; e != NULL; e = e->next)
+    {
+        e->x += e->dx;
+        e->y += e->dy;
+
+        // enemy out of screen
+        if (e != player && e->x < -e->w)
+        {
+            if (e == stage.fighterTail)
+            {
+                stage.fighterTail = prev;
+            }
+
+            prev->next = e->next;
+            free(e);
+            e = prev;
+        }
+
+        prev = e;
+    }
+}
+
+static void spawnEnemies()
+{
+    struct Entity *enemy;
+
+    if (--enemySpawnTimer <= 0)
+    {
+        enemy = malloc(sizeof(struct Entity));
+        memset(enemy, 0, sizeof(struct Entity));
+        stage.fighterTail->next = enemy;
+        stage.fighterTail = enemy;
+
+        enemy->x = SCREEN_WIDTH;
+        enemy->y = rand() % SCREEN_HEIGHT;
+        enemy->texture = enemyTexture;
+        SDL_QueryTexture(enemy->texture, NULL, NULL, &enemy->w, &enemy->h);
+
+        enemy->dx = -(2 + (rand() % 4));
+
+        enemySpawnTimer = 30 + (rand() % 60);
+    }
+}
+
 static void logic()
 {
     doPlayer();
+
+    doFighers();
+
     doBullets();
+
+    spawnEnemies();
 }
 
 void initStage()
@@ -144,4 +202,7 @@ void initStage()
     initPlayer();
 
     bulletTexture = loadTexture((char*)"gfx/playerBullet.png");
+    enemyTexture = loadTexture((char*)"gfx/enemy.png");
+
+    enemySpawnTimer = 0;
 }
