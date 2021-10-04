@@ -5,9 +5,93 @@ static SDL_Texture *playerTexture;
 static SDL_Texture *bulletTexture;
 static SDL_Texture *enemyTexture;
 static SDL_Texture *enemyBulletTexture;
+static SDL_Texture *backgroundTexture;
+static SDL_Texture *explosionTexture;
+
+struct Star stars[MAX_STARS];
+
+int backgroundX = 0;
 
 int enemySpawnTimer;
 int stageResetTimer;
+
+static void addExplosions(int x, int y, int num)
+{
+    struct Explosion *e;
+    int i;
+
+    for (i = 0; i < num; i++)
+    {
+        e = malloc(sizeof(struct Explosion));
+        memset(e, 0, sizeof(struct Explosion));
+
+        stage.explosionTail->next = e;
+        stage.explosionTail = e;
+
+        e->x = (rand() % 32) - (rand() % 32) + x;
+        e->y = (rand() % 32) - (rand() % 32) + y;
+        e->dx = (rand() % 10) - (rand() % 10);
+        e->dy = (rand() % 10) - (rand() % 10);
+
+        e->dx /= 10;
+        e->dy /= 10;
+
+        switch (rand() % 4)
+        {
+        case 0:
+            e->r = 255;
+            break;
+        case 1:
+            e->r = 255;
+            e->g = 128;
+            break;
+        case 2:
+            e->r = 255;
+            e->g = 255;
+            break;
+        default:
+            e->r = 255;
+            e->g = 255;
+            e->b = 255;
+            break;
+        }
+
+        e->a = rand() % FPS * 3;
+    }
+}
+
+static void addDebris(struct Entity *e)
+{
+    struct Debris *d;
+    int x, y, w, h;
+
+    w = e->w / 2;
+    h = e->h / 2;
+
+    for (y = 0; y <= h; y += h)
+    {
+        for (x = 0; x <= w; x += w)
+        {
+            d = malloc(sizeof(struct Debris));
+            memset(d, 0, sizeof(struct Debris));
+
+            stage.debrisTail->next = d;
+            stage.debrisTail = d;
+
+            d->x = e->x + e->w / 2;
+            d->y = e->y + e->h / 2;
+            d->dx = (rand() % 5) - (rand() % 5);
+            d->dy = -(5 + (rand() % 12));
+            d->life = FPS * 2;
+            d->texture = e->texture;
+
+            d->rect.x = x;
+            d->rect.y = y;
+            d->rect.w = w;
+            d->rect.h = h;
+        }
+    }
+}
 
 static int bulletHitFighter(struct Entity *bullet)
 {
@@ -21,11 +105,27 @@ static int bulletHitFighter(struct Entity *bullet)
         {
             bullet->health = 0;
             fighter->health = 0;
+
+            addDebris(fighter);
+            addExplosions(fighter->x, fighter->y, 2);
+
             return 1;
         }
     }
 
     return 0;
+}
+
+static void initStarfield()
+{
+    int i;
+
+    for (i = 0; i < MAX_STARS; i++)
+    {
+        stars[i].x = rand() % SCREEN_WIDTH;
+        stars[i].y = rand() % SCREEN_HEIGHT;
+        stars[i].speed = rand() % 8 + 1;
+    }
 }
 
 static void initPlayer()
@@ -50,6 +150,23 @@ static void resetStage()
 {
     struct Entity *e;
 
+    struct Explosion *explosion;
+    struct Debris *debris;
+
+    while (stage.debrisHead.next)
+    {
+        debris = stage.debrisHead.next;
+        stage.debrisHead.next = debris->next;
+        free(debris);
+    }
+
+    while (stage.explosionHead.next)
+    {
+        explosion = stage.explosionHead.next;
+        stage.explosionHead.next = explosion->next;
+        free(explosion);
+    }
+
     while (stage.fighterHead.next)
     {
         e = stage.fighterHead.next;
@@ -68,13 +185,17 @@ static void resetStage()
 
     stage.fighterTail = &stage.fighterHead;
     stage.bulletTail = &stage.bulletHead;
+    stage.explosionTail = &stage.explosionHead;
+    stage.debrisTail = &stage.debrisHead;
 
     initPlayer();
+
+    initStarfield();
 
     enemySpawnTimer = 0;
 
     // to tell the counter to start at two seconds.
-    stageResetTimer = FPS * 2;
+    stageResetTimer = FPS * 3;
 }
 
 static void fireBullet()
@@ -142,10 +263,11 @@ static void spawnEnemies()
         stage.fighterTail->next = enemy;
         stage.fighterTail = enemy;
 
-        enemy->x = SCREEN_WIDTH;
-        enemy->y = rand() % SCREEN_HEIGHT;
         enemy->texture = enemyTexture;
         SDL_QueryTexture(enemy->texture, NULL, NULL, &enemy->w, &enemy->h);
+        enemy->x = SCREEN_WIDTH;
+        enemy->y = (rand() % SCREEN_HEIGHT);
+        enemy->y = MIN(enemy->y, SCREEN_HEIGHT - enemy->h);
 
         enemy->dx = -(2 + (rand() % 4));
 
@@ -155,6 +277,64 @@ static void spawnEnemies()
         enemy->reload = FPS * (1 + (rand() % 3));
 
         enemySpawnTimer = 30 + (rand() % 60);
+    }
+}
+
+static void drawBackground()
+{
+    SDL_Rect dest;
+    int x;
+
+    for (x = backgroundX; x < SCREEN_WIDTH; x += SCREEN_WIDTH)
+    {
+        dest.x = x;
+        dest.y = 0;
+        dest.w = SCREEN_WIDTH;
+        dest.h = SCREEN_HEIGHT;
+
+        SDL_RenderCopy(app.renderer, backgroundTexture, NULL, &dest);
+    }
+}
+
+static void drawStarfield()
+{
+    int i, c;
+
+    for (i = 0; i < MAX_STARS; i++)
+    {
+        c = stars[i].speed * 32;
+
+        SDL_SetRenderDrawColor(app.renderer, c, c, c, 255);
+
+        SDL_RenderDrawLine(app.renderer, stars[i].x, stars[i].y, stars[i].x + 3, stars[i].y);
+    }
+}
+
+static void drawExplosions()
+{
+    struct Explosion *e;
+
+    SDL_SetRenderDrawBlendMode(app.renderer, SDL_BLENDMODE_ADD);
+    SDL_SetTextureBlendMode(explosionTexture, SDL_BLENDMODE_ADD);
+
+    for (e = stage.explosionHead.next; e != NULL; e = e->next)
+    {
+        SDL_SetTextureColorMod(explosionTexture, e->r, e->g, e->b);
+        SDL_SetTextureAlphaMod(explosionTexture, e->a);
+
+        blit(explosionTexture, e->x, e->y);
+    }
+
+    SDL_SetRenderDrawBlendMode(app.renderer, SDL_BLENDMODE_NONE);
+}
+
+static void drawDebris()
+{
+    struct Debris *d;
+
+    for (d = stage.debrisHead.next; d != NULL; d = d->next)
+    {
+        blitRect(d->texture, &d->rect, d->x, d->y);
     }
 }
 
@@ -180,9 +360,96 @@ static void drawFighters()
 
 static void draw()
 {
+    drawBackground();
+
+    drawStarfield();
+
     drawBullets();
 
     drawFighters();
+
+    drawDebris();
+
+    drawExplosions();
+}
+
+static void doBackground()
+{
+    if (--backgroundX < -SCREEN_WIDTH)
+    {
+        backgroundX = 0;
+    }
+}
+
+static void doStarfield()
+{
+    int i;
+
+    for (i = 0; i < MAX_STARS; i++)
+    {
+        stars[i].x -= stars[i].speed;
+
+        if (stars[i].x < 0)
+        {
+            stars[i].x = SCREEN_WIDTH + stars[i].x;
+        }
+    }
+}
+
+static void doExplosions()
+{
+    struct Explosion *e, *prev;
+
+    prev = &stage.explosionHead;
+
+    for (e = stage.explosionHead.next; e != NULL; e = e->next)
+    {
+        e->x += e->dx;
+        e->y += e->dy;
+
+        if (--e->a <= 0)
+        {
+            if (e == stage.explosionTail)
+            {
+                stage.explosionTail = prev;
+            }
+
+            prev->next = e->next;
+            free(e);
+            e = prev;
+        }
+
+        prev = e;
+    }
+}
+
+static void doDebris()
+{
+    struct Debris *d, *prev;
+
+    prev = &stage.debrisHead;
+
+    for (d = stage.debrisHead.next; d != NULL; d = d->next)
+    {
+        d->x += d->dx;
+        d->y += d->dy;
+
+        d->dy += 0.5;
+
+        if (--d->life <= 0)
+        {
+            if (d == stage.debrisTail)
+            {
+                stage.debrisTail = prev;
+            }
+
+            prev->next = d->next;
+            free(d);
+            d = prev;
+        }
+
+        prev = d;
+    }
 }
 
 static void doPlayer()
@@ -318,6 +585,10 @@ static void clipPlayer()
 
 static void logic()
 {
+    doBackground();
+
+    doStarfield();
+
     doPlayer();
 
     doFighters();
@@ -325,6 +596,10 @@ static void logic()
     doEnemies();
 
     doBullets();
+
+    doExplosions();
+
+    doDebris();
 
     spawnEnemies();
 
@@ -349,6 +624,9 @@ void initStage()
     bulletTexture = loadTexture((char*)"gfx/playerBullet.png");
     enemyTexture = loadTexture((char*)"gfx/enemy.png");
     enemyBulletTexture = loadTexture((char*)"gfx/enemyBullet.png");
+
+    backgroundTexture = loadTexture((char*)"gfx/background.jpg");
+    explosionTexture = loadTexture((char*)"gfx/explosion.png");
 
     resetStage();
 }

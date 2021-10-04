@@ -14,4 +14,6 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #define FPS 60
-#define ENEMY_BULLET_SPEED 8
+#define ENEMY_BULLET_SPEED 4
+
+#define MAX_STARS 20

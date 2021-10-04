@@ -43,5 +43,8 @@ void initSDL()
         printf("Failed to initialize SDL_image: %s\n", SDL_GetError());
         exit(1);
     }
+
+    SDL_ShowCursor(0);
+
     #endif
 }
