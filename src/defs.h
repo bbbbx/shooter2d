@@ -12,3 +12,6 @@
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+#define FPS 60
+#define ENEMY_BULLET_SPEED 8

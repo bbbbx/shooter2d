@@ -4,9 +4,11 @@ emcc \
     src/draw.c \
     src/init.c \
     src/stage.c \
+    src/utils.c \
     --preload-file gfx/player.png \
     --preload-file gfx/playerBullet.png \
     --preload-file gfx/enemy.png \
+    --preload-file gfx/enemyBullet.png \
     -s USE_SDL=2 \
     -s WASM=1 \
     -s MIN_WEBGL_VERSION=2 \
