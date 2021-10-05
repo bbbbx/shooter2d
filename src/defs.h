@@ -14,6 +14,26 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #define FPS 60
-#define ENEMY_BULLET_SPEED 4
+#define ENEMY_BULLET_SPEED 8
 
 #define MAX_STARS 20
+
+#define MAX_SND_CHANNELS 8
+
+// CH_ enum will specify the channel through which a sound will play
+enum
+{
+    CH_ANY = -1,
+    CH_PLAYER,
+    CH_ENEMY_FIRE
+};
+
+// SND_ will be used to identify a sound effect
+enum
+{
+    SND_PLAYER_FIRE,
+    SND_ENEMY_FIRE,
+    SND_PLAYER_DIE,
+    SND_ENEMY_DIE,
+    SND_MAX
+};

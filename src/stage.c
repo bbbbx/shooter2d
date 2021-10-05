@@ -109,6 +109,15 @@ static int bulletHitFighter(struct Entity *bullet)
             addDebris(fighter);
             addExplosions(fighter->x, fighter->y, 2);
 
+            if (fighter == player)
+            {
+                playSound(SND_PLAYER_DIE, CH_PLAYER);
+            }
+            else
+            {
+                playSound(SND_ENEMY_DIE, CH_ANY);
+            }
+
             return 1;
         }
     }
@@ -488,6 +497,8 @@ static void doPlayer()
 
     if (app.keyboard[SDL_SCANCODE_SPACE] && player->reload == 0)
     {
+        playSound(SND_PLAYER_FIRE, CH_PLAYER);
+
         fireBullet();
     }
 }
@@ -566,6 +577,8 @@ static void doEnemies()
         if (e != player && player != NULL && --e->reload <= 0)
         {
             fireEnemyBullet(e);
+
+            playSound(SND_ENEMY_FIRE, CH_ENEMY_FIRE);
         }
     }
 }

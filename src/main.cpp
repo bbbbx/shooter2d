@@ -12,6 +12,7 @@ extern "C" SDL_Texture* loadTexture(char *filename);
 extern "C" void blit(SDL_Texture *texture, int x, int y);
 
 extern "C" void initStage(void);
+extern "C" void initSounds(void);
 
 App app;
 Stage stage;
@@ -61,6 +62,12 @@ void loop()
 
 int main(int argc, char** argv)
 {
+    SDL_version version;
+    SDL_GetVersion(&version);
+    printf("Linked against SDL %d.%d.%d.\n",
+           version.major, version.minor, version.patch);
+    assert(version.major == 2);
+
     long then;
     float remainder;
 
@@ -71,6 +78,8 @@ int main(int argc, char** argv)
     // atexit(cleanup);
 
     initStage();
+
+    initSounds();
 
     then = SDL_GetTicks();
 

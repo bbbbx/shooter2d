@@ -10,7 +10,7 @@ void initSDL()
 
     int windowFlags = 0;
     app.window = SDL_CreateWindow(
-        "Title",
+        "Shoot'em Up",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         SCREEN_WIDTH,
@@ -36,15 +36,37 @@ void initSDL()
         exit(1);
     }
 
-    #ifndef __EMSCRIPTEN__
-    // See https://github.com/emscripten-ports/SDL2_image/issues/3
+#ifndef __EMSCRIPTEN__
+// Emscripten doesn't need to call IMG_Init. See:
+//   - https://github.com/emscripten-ports/SDL2_image/issues/3
+//   - https://github.com/emscripten-core/emscripten/pull/3831#issuecomment-154383178
     if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG))
     {
         printf("Failed to initialize SDL_image: %s\n", SDL_GetError());
         exit(1);
     }
+#endif
+
+    int frequency = 44100;
+#ifdef __EMSCRIPTEN__
+    frequency = EM_ASM_INT_V({
+        var context;
+        try {
+            context = new AudioContext();
+        } catch (e) {
+            context = new webkitAudioContext(); // safari only
+        }
+        return context.sampleRate;
+    });
+#endif
+
+    if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
+    {
+        printf("Couldn't initialize SDL Mixer\n");
+        exit(1);
+    }
+
+    Mix_AllocateChannels(MAX_SND_CHANNELS);
 
     SDL_ShowCursor(0);
-
-    #endif
 }
