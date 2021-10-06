@@ -7,6 +7,7 @@ emcc \
     src/utils.c \
     src/sound.c \
     src/text.c \
+    src/highscores.c \
     --preload-file gfx/player.png \
     --preload-file gfx/playerBullet.png \
     --preload-file gfx/enemy.png \

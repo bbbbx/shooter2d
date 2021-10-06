@@ -15,6 +15,7 @@ if(SDL2_FOUND)
         src/utils.c
         src/sound.c
         src/text.c
+        src/highscores.c
     )
     target_link_libraries(main ${SDL2_LIBRARIES})
 endif()

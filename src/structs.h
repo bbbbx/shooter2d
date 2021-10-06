@@ -1,5 +1,16 @@
 #pragma once
 
+typedef struct
+{
+    int recent;
+    int score;
+} Highscore;
+
+typedef struct
+{
+    Highscore highscore[NUM_HIGHSCORES];
+} Highscores;
+
 typedef struct {
     void (*logic)(void);
     void (*draw)(void);

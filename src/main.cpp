@@ -12,6 +12,7 @@ extern "C" SDL_Texture* loadTexture(char *filename);
 extern "C" void blit(SDL_Texture *texture, int x, int y);
 
 extern "C" void initStage(void);
+extern "C" void initHighscores(void);
 extern "C" void initSounds(void);
 extern "C" void initFonts(void);
 
@@ -79,6 +80,8 @@ int main(int argc, char** argv)
     // atexit(cleanup);
 
     initStage();
+
+    initHighscores();
 
     initSounds();
 

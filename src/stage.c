@@ -328,7 +328,7 @@ static void spawnEnemies()
     }
 }
 
-static void drawBackground()
+void drawBackground()
 {
     SDL_Rect dest;
     int x;
@@ -344,7 +344,7 @@ static void drawBackground()
     }
 }
 
-static void drawStarfield()
+void drawStarfield()
 {
     int i, c;
 
@@ -450,7 +450,7 @@ static void draw()
     drawHud();
 }
 
-static void doBackground()
+void doBackground()
 {
     if (--backgroundX < -SCREEN_WIDTH)
     {
@@ -458,7 +458,7 @@ static void doBackground()
     }
 }
 
-static void doStarfield()
+void doStarfield()
 {
     int i;
 
@@ -752,7 +752,11 @@ static void logic()
 
     if (player == NULL && --stageResetTimer <= 0)
     {
-        resetStage();
+        // resetStage();
+
+        addHighscore(stage.score);
+
+        initHighscores();
     }
 }
 
