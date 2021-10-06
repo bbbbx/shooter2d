@@ -43,6 +43,11 @@ void loadSounds()
     {
         puts("Failed to load audio sound/10 Guage Shotgun-SoundBible.com-74120584.wav");
     }
+
+    if ((sounds[SND_POINTS] = Mix_LoadWAV("sound/342749__rhodesmas__notification-01.wav")) == NULL)
+    {
+        puts("Failed to load audio sound/342749__rhodesmas__notification-01.wav");
+    }
 }
 
 void initSounds()
@@ -53,10 +58,6 @@ void initSounds()
 
     loadSounds();
 
-#ifdef __EMSCRIPTEN__
-    loadMusic("sound/476556__magmi-soundtracks__sci-fi-music-loop-01.mp3");
-#else
-    loadMusic("sound/476556__magmi-soundtracks__sci-fi-music-loop-01.wav");
-#endif
+    loadMusic("sound/324252__rhodesmas__rings-of-saturn-music-loop.wav");
     playMusic(1);
 }

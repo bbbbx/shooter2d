@@ -14,11 +14,13 @@ emcc \
     --preload-file gfx/explosion.png \
     --preload-file gfx/background.jpg \
     --preload-file gfx/kromasky_16x16.png \
+    --preload-file gfx/star_coin_normal_30x30.png \
     --preload-file sound/196914__dpoggioli__laser-gun.wav \
     --preload-file sound/245372__quaker540__hq-explosion.wav \
     --preload-file sound/334227__jradcoolness__laser.wav \
     --preload-file "sound/10 Guage Shotgun-SoundBible.com-74120584.wav" \
-    --preload-file "sound/476556__magmi-soundtracks__sci-fi-music-loop-01.mp3" \
+    --preload-file "sound/324252__rhodesmas__rings-of-saturn-music-loop.wav" \
+    --preload-file "sound/342749__rhodesmas__notification-01.wav" \
     -s WASM=1 \
     -s MIN_WEBGL_VERSION=2 \
     -s ALLOW_MEMORY_GROWTH=1 \

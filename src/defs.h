@@ -25,7 +25,8 @@ enum
 {
     CH_ANY = -1,
     CH_PLAYER,
-    CH_ENEMY_FIRE
+    CH_ENEMY_FIRE,
+    CH_POINTS
 };
 
 // SND_ will be used to identify a sound effect
@@ -35,6 +36,7 @@ enum
     SND_ENEMY_FIRE,
     SND_PLAYER_DIE,
     SND_ENEMY_DIE,
+    SND_POINTS,
     SND_MAX
 };
 

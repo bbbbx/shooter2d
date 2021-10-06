@@ -62,6 +62,7 @@ struct Star
 typedef struct {
     struct Entity fighterHead, *fighterTail;
     struct Entity bulletHead, *bulletTail;
+    struct Entity pointsHead, *pointsTail;
     struct Explosion explosionHead, *explosionTail;
     struct Debris debrisHead, *debrisTail;
     int score;
