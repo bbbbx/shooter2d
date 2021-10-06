@@ -13,6 +13,7 @@ extern "C" void blit(SDL_Texture *texture, int x, int y);
 
 extern "C" void initStage(void);
 extern "C" void initSounds(void);
+extern "C" void initFonts(void);
 
 App app;
 Stage stage;
@@ -80,6 +81,8 @@ int main(int argc, char** argv)
     initStage();
 
     initSounds();
+
+    initFonts();
 
     then = SDL_GetTicks();
 

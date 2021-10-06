@@ -6,12 +6,14 @@ emcc \
     src/stage.c \
     src/utils.c \
     src/sound.c \
+    src/text.c \
     --preload-file gfx/player.png \
     --preload-file gfx/playerBullet.png \
     --preload-file gfx/enemy.png \
     --preload-file gfx/enemyBullet.png \
     --preload-file gfx/explosion.png \
     --preload-file gfx/background.jpg \
+    --preload-file gfx/kromasky_16x16.png \
     --preload-file sound/196914__dpoggioli__laser-gun.wav \
     --preload-file sound/245372__quaker540__hq-explosion.wav \
     --preload-file sound/334227__jradcoolness__laser.wav \

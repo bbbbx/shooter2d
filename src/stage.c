@@ -15,6 +15,8 @@ int backgroundX = 0;
 int enemySpawnTimer;
 int stageResetTimer;
 
+int highscore = 0;
+
 static void addExplosions(int x, int y, int num)
 {
     struct Explosion *e;
@@ -116,6 +118,10 @@ static int bulletHitFighter(struct Entity *bullet)
             else
             {
                 playSound(SND_ENEMY_DIE, CH_ANY);
+
+                stage.score++;
+
+                highscore = MAX(highscore, stage.score);
             }
 
             return 1;
@@ -196,6 +202,7 @@ static void resetStage()
     stage.bulletTail = &stage.bulletHead;
     stage.explosionTail = &stage.explosionHead;
     stage.debrisTail = &stage.debrisHead;
+    stage.score = 0;
 
     initPlayer();
 
@@ -367,6 +374,21 @@ static void drawFighters()
     }
 }
 
+static void drawHud()
+{
+    drawText(10, 10, 255, 255, 255, "SCORE: %03d", stage.score);
+
+    int breakScore = stage.score > 0 && stage.score == highscore;
+    if (breakScore)
+    {
+        drawText(960, 10, 0, 255, 0, "HIGH SCORE: %03d", highscore);
+    }
+    else
+    {
+        drawText(960, 10, 255, 255, 255, "HIGH SCORE: %03d", highscore);
+    }
+}
+
 static void draw()
 {
     drawBackground();
@@ -380,6 +402,8 @@ static void draw()
     drawDebris();
 
     drawExplosions();
+
+    drawHud();
 }
 
 static void doBackground()

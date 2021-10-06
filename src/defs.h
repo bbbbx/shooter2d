@@ -37,3 +37,7 @@ enum
     SND_ENEMY_DIE,
     SND_MAX
 };
+
+#define MAX_LINE_LENGTH 1024
+#define GLYPH_WIDTH 16
+#define GLYPH_HEIGHT 16
