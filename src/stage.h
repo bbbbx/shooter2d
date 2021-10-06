@@ -9,6 +9,9 @@ extern int collision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int
 extern void calcSlope(int x1, int y1, int x2, int y2, int *dx, int *dy);
 extern void playSound(int id, int channel);
 extern void drawText(int x, int y, int r, int g, int b, char *format, ...);
+extern void initStarfield(void);
+extern void drawBackground(void);
+extern void drawStarfield(void);
 
 extern void addHighscore(int score);
 extern void initHighscores();
@@ -16,9 +19,8 @@ extern void initHighscores();
 void initStage(void);
 void doBackground(void);
 void doStarfield(void);
-void drawBackground(void);
-void drawStarfield(void);
-
 
 extern App app;
 extern Stage stage;
+extern struct Star stars[MAX_STARS];
+extern int backgroundX;

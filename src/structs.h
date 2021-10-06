@@ -1,5 +1,12 @@
 #pragma once
 
+struct Texture
+{
+    char name[MAX_NAME_LENGTH];
+    SDL_Texture *texture;
+    struct Texture *next;
+};
+
 typedef struct
 {
     int recent;
@@ -22,6 +29,8 @@ typedef struct {
 
     Delegate delegate;
     int keyboard[MAX_KEYBOARD_KEYS];
+
+    struct Texture textureHead, *textureTail;
 } App;
 
 struct Entity

@@ -5,13 +5,8 @@ static SDL_Texture *playerTexture;
 static SDL_Texture *bulletTexture;
 static SDL_Texture *enemyTexture;
 static SDL_Texture *enemyBulletTexture;
-static SDL_Texture *backgroundTexture;
 static SDL_Texture *explosionTexture;
 static SDL_Texture *pointsTexture;
-
-struct Star stars[MAX_STARS];
-
-int backgroundX = 0;
 
 int enemySpawnTimer;
 int stageResetTimer;
@@ -153,18 +148,6 @@ static int bulletHitFighter(struct Entity *bullet)
     }
 
     return 0;
-}
-
-static void initStarfield()
-{
-    int i;
-
-    for (i = 0; i < MAX_STARS; i++)
-    {
-        stars[i].x = rand() % SCREEN_WIDTH;
-        stars[i].y = rand() % SCREEN_HEIGHT;
-        stars[i].speed = rand() % 8 + 1;
-    }
 }
 
 static void initPlayer()
@@ -325,36 +308,6 @@ static void spawnEnemies()
         enemy->reload = FPS * (1 + (rand() % 3));
 
         enemySpawnTimer = 30 + (rand() % 60);
-    }
-}
-
-void drawBackground()
-{
-    SDL_Rect dest;
-    int x;
-
-    for (x = backgroundX; x < SCREEN_WIDTH; x += SCREEN_WIDTH)
-    {
-        dest.x = x;
-        dest.y = 0;
-        dest.w = SCREEN_WIDTH;
-        dest.h = SCREEN_HEIGHT;
-
-        SDL_RenderCopy(app.renderer, backgroundTexture, NULL, &dest);
-    }
-}
-
-void drawStarfield()
-{
-    int i, c;
-
-    for (i = 0; i < MAX_STARS; i++)
-    {
-        c = stars[i].speed * 32;
-
-        SDL_SetRenderDrawColor(app.renderer, c, c, c, 255);
-
-        SDL_RenderDrawLine(app.renderer, stars[i].x, stars[i].y, stars[i].x + 3, stars[i].y);
     }
 }
 
@@ -752,8 +705,6 @@ static void logic()
 
     if (player == NULL && --stageResetTimer <= 0)
     {
-        // resetStage();
-
         addHighscore(stage.score);
 
         initHighscores();
@@ -774,7 +725,6 @@ void initStage()
     enemyTexture = loadTexture((char*)"gfx/enemy.png");
     enemyBulletTexture = loadTexture((char*)"gfx/enemyBullet.png");
 
-    backgroundTexture = loadTexture((char*)"gfx/background.jpg");
     explosionTexture = loadTexture((char*)"gfx/explosion.png");
 
     pointsTexture = loadTexture((char*)"gfx/star_coin_normal_30x30.png");

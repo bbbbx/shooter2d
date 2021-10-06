@@ -9,4 +9,7 @@ extern void doStarfield(void);
 extern void drawBackground(void);
 extern void drawStarfield(void);
 
+void initHighscoresTable(void);
+void initHighscores(void);
+
 Highscores highscores;

@@ -6,6 +6,7 @@
 
 extern "C" void doInput(void);
 extern "C" void initSDL(void);
+extern "C" void initGame(void);
 extern "C" void prepareScene(void);
 extern "C" void presentScene(void);
 extern "C" SDL_Texture* loadTexture(char *filename);
@@ -13,11 +14,12 @@ extern "C" void blit(SDL_Texture *texture, int x, int y);
 
 extern "C" void initStage(void);
 extern "C" void initHighscores(void);
-extern "C" void initSounds(void);
-extern "C" void initFonts(void);
 
 App app;
 Stage stage;
+SDL_Texture *backgroundTexture;
+struct Star stars[MAX_STARS];
+int backgroundX = 0;
 
 long then;
 float timeRemainder;
@@ -79,13 +81,11 @@ int main(int argc, char** argv)
 
     // atexit(cleanup);
 
-    initStage();
+    app.textureTail = &app.textureHead;
+
+    initGame();
 
     initHighscores();
-
-    initSounds();
-
-    initFonts();
 
     then = SDL_GetTicks();
 

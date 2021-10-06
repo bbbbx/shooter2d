@@ -70,3 +70,37 @@ void initSDL()
 
     SDL_ShowCursor(0);
 }
+
+void initBackground()
+{
+    backgroundTexture = loadTexture((char*)"gfx/background.jpg");
+}
+
+void initStarfield()
+{
+    int i;
+
+    for (i = 0; i < MAX_STARS; i++)
+    {
+        stars[i].x = rand() % SCREEN_WIDTH;
+        stars[i].y = rand() % SCREEN_HEIGHT;
+        stars[i].speed = rand() % 8 + 1;
+    }
+}
+
+void initGame()
+{
+    initBackground();
+
+    initStarfield();
+
+    initFonts();
+
+    initSounds();
+
+    loadMusic("sound/324252__rhodesmas__rings-of-saturn-music-loop.wav");
+
+    playMusic(1);
+
+    initHighscoresTable();
+}

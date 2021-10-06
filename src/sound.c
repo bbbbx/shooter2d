@@ -57,7 +57,4 @@ void initSounds()
     music = NULL;
 
     loadSounds();
-
-    loadMusic("sound/324252__rhodesmas__rings-of-saturn-music-loop.wav");
-    playMusic(1);
 }
