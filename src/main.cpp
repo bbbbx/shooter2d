@@ -4,6 +4,7 @@
 
 #include "common.h"
 
+extern "C" void cleanup(void);
 extern "C" void doInput(void);
 extern "C" void initSDL(void);
 extern "C" void initGame(void);
@@ -14,6 +15,7 @@ extern "C" void blit(SDL_Texture *texture, int x, int y);
 
 extern "C" void initStage(void);
 extern "C" void initHighscores(void);
+extern "C" void initTitle(void);
 
 App app;
 Stage stage;
@@ -79,13 +81,13 @@ int main(int argc, char** argv)
 
     initSDL();
 
-    // atexit(cleanup);
+    atexit(cleanup);
 
     app.textureTail = &app.textureHead;
 
     initGame();
 
-    initHighscores();
+    initTitle();
 
     then = SDL_GetTicks();
 

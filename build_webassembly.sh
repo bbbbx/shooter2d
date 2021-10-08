@@ -8,6 +8,7 @@ emcc \
     src/sound.c \
     src/text.c \
     src/highscores.c \
+    src/title.c \
     --preload-file gfx/player.png \
     --preload-file gfx/playerBullet.png \
     --preload-file gfx/enemy.png \
@@ -16,6 +17,8 @@ emcc \
     --preload-file gfx/background.jpg \
     --preload-file gfx/font.png \
     --preload-file gfx/star_coin_normal_30x30.png \
+    --preload-file gfx/sdl2.png \
+    --preload-file gfx/shooter.png \
     --preload-file sound/196914__dpoggioli__laser-gun.wav \
     --preload-file sound/245372__quaker540__hq-explosion.wav \
     --preload-file sound/334227__jradcoolness__laser.wav \

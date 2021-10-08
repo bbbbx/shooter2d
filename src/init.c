@@ -1,5 +1,12 @@
 #include "init.h"
 
+void cleanup()
+{
+    SDL_DestroyRenderer(app.renderer);
+    SDL_DestroyWindow(app.window);
+    SDL_Quit();
+}
+
 void initSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)

@@ -8,6 +8,8 @@ extern void doBackground(void);
 extern void doStarfield(void);
 extern void drawBackground(void);
 extern void drawStarfield(void);
+extern void initTitle(void);
+extern int timeout;
 
 void initHighscoresTable(void);
 void initHighscores(void);

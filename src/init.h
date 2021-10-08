@@ -21,6 +21,7 @@ extern SDL_Texture *backgroundTexture;
 extern struct Star stars[MAX_STARS];
 extern int backgroundX;
 
+void cleanup(void);
 void initSDL(void);
 void initGame(void);
 void initBackground(void);

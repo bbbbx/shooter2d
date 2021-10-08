@@ -90,6 +90,11 @@ static void logic()
         {
             initStage();
         }
+
+        if (--timeout <= 0)
+        {
+            initTitle();
+        }
     }
 
     if (++cursorBlink >= FPS)
@@ -122,7 +127,10 @@ static void drawHighscores()
         y += 50;
     }
 
-    drawText(SCREEN_WIDTH / 2, 600, 255, 255, 255, TEXT_CENTER, "PRESS SPACE BAR TO PLAY!");
+    if (timeout % 40 < 20)
+    {
+        drawText(SCREEN_WIDTH / 2, 600, 255, 255, 255, TEXT_CENTER, "PRESS SPACE TO PLAY!");
+    }
 }
 
 static void drawNameInput()
@@ -190,4 +198,6 @@ void initHighscores()
     app.delegate.draw = draw;
 
     memset(app.keyboard, 0, sizeof(int) * MAX_KEYBOARD_KEYS);
+
+    timeout = FPS * 5;
 }
