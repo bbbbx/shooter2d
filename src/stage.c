@@ -371,16 +371,16 @@ static void drawFighters()
 
 static void drawHud()
 {
-    drawText(10, 10, 255, 255, 255, "SCORE: %03d", stage.score);
+    drawText(10, 10, 255, 255, 255, TEXT_RIGHT, "SCORE: %03d", stage.score);
 
     int breakScore = stage.score > 0 && stage.score == highscore;
     if (breakScore)
     {
-        drawText(960, 10, 0, 255, 0, "HIGH SCORE: %03d", highscore);
+        drawText(960, 10, 0, 255, 0, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
     }
     else
     {
-        drawText(960, 10, 255, 255, 255, "HIGH SCORE: %03d", highscore);
+        drawText(960, 10, 255, 255, 255, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
     }
 }
 

@@ -41,11 +41,20 @@ enum
 };
 
 #define MAX_LINE_LENGTH 1024
-#define GLYPH_WIDTH 16
-#define GLYPH_HEIGHT 16
+#define GLYPH_WIDTH 18
+#define GLYPH_HEIGHT 28
 
 #define NUM_HIGHSCORES 8
 
 #define STRNCPY(dest, src, n) strncpy(dest, src, n); dest[n - 1] = '\0'
 
 #define MAX_NAME_LENGTH 256
+
+enum
+{
+    TEXT_LEFT,
+    TEXT_CENTER,
+    TEXT_RIGHT
+};
+
+#define MAX_SCORE_NAME_LENGTH 16

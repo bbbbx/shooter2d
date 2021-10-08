@@ -14,7 +14,7 @@ emcc \
     --preload-file gfx/enemyBullet.png \
     --preload-file gfx/explosion.png \
     --preload-file gfx/background.jpg \
-    --preload-file gfx/kromasky_16x16.png \
+    --preload-file gfx/font.png \
     --preload-file gfx/star_coin_normal_30x30.png \
     --preload-file sound/196914__dpoggioli__laser-gun.wav \
     --preload-file sound/245372__quaker540__hq-explosion.wav \

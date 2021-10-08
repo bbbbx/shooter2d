@@ -9,6 +9,7 @@ struct Texture
 
 typedef struct
 {
+    char name[MAX_SCORE_NAME_LENGTH];
     int recent;
     int score;
 } Highscore;
@@ -31,6 +32,8 @@ typedef struct {
     int keyboard[MAX_KEYBOARD_KEYS];
 
     struct Texture textureHead, *textureTail;
+
+    char inputText[MAX_LINE_LENGTH];
 } App;
 
 struct Entity

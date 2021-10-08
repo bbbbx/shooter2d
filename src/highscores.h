@@ -13,3 +13,5 @@ void initHighscoresTable(void);
 void initHighscores(void);
 
 Highscores highscores;
+Highscore *newHighscore;
+int cursorBlink = 0;
