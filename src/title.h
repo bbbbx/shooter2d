@@ -13,6 +13,9 @@ extern void drawText(int x, int y, int r, int g, int b, int align, char *format,
 extern void blitRect(SDL_Texture *texture, SDL_Rect *src, int x, int y);
 
 extern App app;
+extern int screenWidth;
+extern int screenHeight;
+
 SDL_Texture *sdl2Texture;
 SDL_Texture *shooterTexture;
 int timeout;

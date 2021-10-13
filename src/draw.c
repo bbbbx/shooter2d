@@ -91,12 +91,12 @@ void drawBackground()
     SDL_Rect dest;
     int x;
 
-    for (x = backgroundX; x < SCREEN_WIDTH; x += SCREEN_WIDTH)
+    for (x = backgroundX; x < screenWidth; x += screenWidth)
     {
         dest.x = x;
         dest.y = 0;
-        dest.w = SCREEN_WIDTH;
-        dest.h = SCREEN_HEIGHT;
+        dest.w = screenWidth;
+        dest.h = screenHeight;
 
         SDL_RenderCopy(app.renderer, backgroundTexture, NULL, &dest);
     }

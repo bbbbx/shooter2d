@@ -11,3 +11,5 @@ extern App app;
 extern SDL_Texture *backgroundTexture;
 extern struct Star stars[MAX_STARS];
 extern int backgroundX;
+extern int screenWidth;
+extern int screenHeight;

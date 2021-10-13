@@ -9,12 +9,23 @@
         html, body {
             margin: 0;
         }
+        canvas {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
     <script>
         const canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
         var Module = {
             canvas: canvas,
         };

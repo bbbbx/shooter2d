@@ -6,7 +6,7 @@ static void logic()
 
     doStarfield();
 
-    if (reveal < SCREEN_HEIGHT)
+    if (reveal < screenHeight)
     {
         reveal++;
     }
@@ -31,11 +31,11 @@ static void drawLogo()
 
     SDL_QueryTexture(sdl2Texture, NULL, NULL, &rect.w, &rect.h);
     rect.h = MIN(reveal, rect.h);
-    blitRect(sdl2Texture, &rect, (SCREEN_WIDTH / 2) - (rect.w / 2), 100);
+    blitRect(sdl2Texture, &rect, (screenWidth / 2) - (rect.w / 2), 100);
 
     SDL_QueryTexture(shooterTexture, NULL, NULL, &rect.w, &rect.h);
     rect.h = MIN(reveal, rect.h);
-    blitRect(shooterTexture, &rect, (SCREEN_WIDTH / 2) - (rect.w / 2), 250);
+    blitRect(shooterTexture, &rect, (screenWidth / 2) - (rect.w / 2), 250);
 }
 
 static void draw()
@@ -48,7 +48,7 @@ static void draw()
 
     if (timeout % 40 < 20)
     {
-        drawText(SCREEN_WIDTH / 2, 600, 255, 255, 255, TEXT_CENTER, "PRESS SPACE TO FIRE!");
+        drawText(screenWidth / 2, 600, 255, 255, 255, TEXT_CENTER, "PRESS SPACE TO FIRE!");
     }
 }
 

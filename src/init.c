@@ -15,19 +15,23 @@ void initSDL()
         exit(1);
     }
 
+#ifdef __EMSCRIPTEN__
+    emscripten_get_canvas_element_size("#canvas", &screenWidth, &screenHeight);
+#endif
+
     int windowFlags = 0;
     app.window = SDL_CreateWindow(
         "Shoot'em Up",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        SCREEN_WIDTH,
-        SCREEN_HEIGHT,
+        screenWidth,
+        screenHeight,
         windowFlags
     );
 
     if (!app.window)
     {
-        printf("Failed to open %dx%d window: %s\n", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_GetError());
+        printf("Failed to open %dx%d window: %s\n", screenWidth, screenHeight, SDL_GetError());
         exit(1);
     }
 
@@ -89,8 +93,8 @@ void initStarfield()
 
     for (i = 0; i < MAX_STARS; i++)
     {
-        stars[i].x = rand() % SCREEN_WIDTH;
-        stars[i].y = rand() % SCREEN_HEIGHT;
+        stars[i].x = rand() % screenWidth;
+        stars[i].y = rand() % screenHeight;
         stars[i].speed = rand() % 8 + 1;
     }
 }

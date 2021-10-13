@@ -7,6 +7,7 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #endif
 
 extern void initFonts(void);
@@ -20,6 +21,8 @@ extern App app;
 extern SDL_Texture *backgroundTexture;
 extern struct Star stars[MAX_STARS];
 extern int backgroundX;
+extern int screenWidth;
+extern int screenHeight;
 
 void cleanup(void);
 void initSDL(void);

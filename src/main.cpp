@@ -1,5 +1,6 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #endif
 
 #include "common.h"
@@ -22,6 +23,8 @@ Stage stage;
 SDL_Texture *backgroundTexture;
 struct Star stars[MAX_STARS];
 int backgroundX = 0;
+int screenWidth = 1280;
+int screenHeight = 720;
 
 long then;
 float timeRemainder;
@@ -52,6 +55,11 @@ static void capFrameRate(long *then, float *remainder)
 
 void loop()
 {
+#ifdef __EMSCRIPTEN__
+    emscripten_get_canvas_element_size("#canvas", &screenWidth, &screenHeight);
+    SDL_SetWindowSize(app.window, screenWidth, screenHeight);
+#endif
+
     prepareScene();
 
     doInput();
@@ -95,7 +103,6 @@ int main(int argc, char** argv)
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(&loop, 0, 1);
-    // emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);
 #else
     while (1)
     {

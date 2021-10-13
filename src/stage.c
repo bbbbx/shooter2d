@@ -296,9 +296,9 @@ static void spawnEnemies()
 
         enemy->texture = enemyTexture;
         SDL_QueryTexture(enemy->texture, NULL, NULL, &enemy->w, &enemy->h);
-        enemy->x = SCREEN_WIDTH;
-        enemy->y = (rand() % SCREEN_HEIGHT);
-        enemy->y = MIN(enemy->y, SCREEN_HEIGHT - enemy->h);
+        enemy->x = screenWidth;
+        enemy->y = (rand() % screenHeight);
+        enemy->y = MIN(enemy->y, screenHeight - enemy->h);
 
         enemy->dx = -(2 + (rand() % 4));
 
@@ -378,11 +378,11 @@ static void drawHud()
     int breakScore = stage.score > 0 && stage.score == highscore;
     if (breakScore)
     {
-        drawText(960, 10, 0, 255, 0, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
+        drawText(screenWidth - 320, 10, 0, 255, 0, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
     }
     else
     {
-        drawText(960, 10, 255, 255, 255, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
+        drawText(screenWidth - 320, 10, 255, 255, 255, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
     }
 }
 
@@ -407,7 +407,7 @@ static void draw()
 
 void doBackground()
 {
-    if (--backgroundX < -SCREEN_WIDTH)
+    if (--backgroundX < -screenWidth)
     {
         backgroundX = 0;
     }
@@ -423,7 +423,7 @@ void doStarfield()
 
         if (stars[i].x < 0)
         {
-            stars[i].x = SCREEN_WIDTH + stars[i].x;
+            stars[i].x = screenWidth + stars[i].x;
         }
     }
 }
@@ -498,22 +498,22 @@ static void doPlayer()
         player->reload--;
     }
 
-    if (app.keyboard[SDL_SCANCODE_UP])
+    if (app.keyboard[SDL_SCANCODE_UP] || app.keyboard[SDL_SCANCODE_W])
     {
         player->dy = -PLAYER_SPEED;
     }
 
-    if (app.keyboard[SDL_SCANCODE_DOWN])
+    if (app.keyboard[SDL_SCANCODE_DOWN] || app.keyboard[SDL_SCANCODE_S])
     {
         player->dy = PLAYER_SPEED;
     }
 
-    if (app.keyboard[SDL_SCANCODE_LEFT])
+    if (app.keyboard[SDL_SCANCODE_LEFT] || app.keyboard[SDL_SCANCODE_A])
     {
         player->dx = -PLAYER_SPEED;
     }
 
-    if (app.keyboard[SDL_SCANCODE_RIGHT])
+    if (app.keyboard[SDL_SCANCODE_RIGHT] || app.keyboard[SDL_SCANCODE_D])
     {
         player->dx = PLAYER_SPEED;
     }
@@ -537,7 +537,7 @@ static void doBullets()
         b->x += b->dx;
         b->y += b->dy;
 
-        if (b->x < -b->w || b->y < -b->h || b->x > SCREEN_WIDTH || b->y > SCREEN_HEIGHT || bulletHitFighter(b))
+        if (b->x < -b->w || b->y < -b->h || b->x > screenWidth || b->y > screenHeight || bulletHitFighter(b))
         {
             if (b == stage.bulletTail)
             {
@@ -567,9 +567,9 @@ static void doPointsPods()
             e->dx = -e->dx;
         }
 
-        if (e->x + e->w > SCREEN_WIDTH)
+        if (e->x + e->w > screenWidth)
         {
-            e->x = SCREEN_WIDTH - e->w;
+            e->x = screenWidth - e->w;
             e->dx = -e->dx;
         }
 
@@ -579,9 +579,9 @@ static void doPointsPods()
             e->dy = -e->dy;
         }
 
-        if (e->y + e->h > SCREEN_HEIGHT)
+        if (e->y + e->h > screenHeight)
         {
-            e->y = SCREEN_HEIGHT - e->h;
+            e->y = screenHeight - e->h;
             e->dy = -e->dy;
         }
 
@@ -677,8 +677,8 @@ static void clipPlayer()
 
     player->x = MAX(0, player->x);
     player->y = MAX(0, player->y);
-    player->x = MIN(SCREEN_WIDTH - player->w, player->x);
-    player->y = MIN(SCREEN_HEIGHT - player->h, player->y);
+    player->x = MIN(screenWidth - player->w, player->x);
+    player->y = MIN(screenHeight - player->h, player->y);
 }
 
 static void logic()

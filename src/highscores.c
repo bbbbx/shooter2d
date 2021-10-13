@@ -109,7 +109,7 @@ static void drawHighscores()
 
     y = 150;
 
-    drawText(SCREEN_WIDTH / 2, 70, 255, 255, 255, TEXT_CENTER, "HIGHSCORES");
+    drawText(screenWidth / 2, 70, 255, 255, 255, TEXT_CENTER, "HIGHSCORES");
 
     for (i = 0; i < NUM_HIGHSCORES; i++)
     {
@@ -122,14 +122,14 @@ static void drawHighscores()
             b = 0;
         }
 
-        drawText(SCREEN_WIDTH / 2, y, r, g, b, TEXT_CENTER, "#%d %-15s ...... %03d", (i + 1), highscores.highscore[i].name, highscores.highscore[i].score);
+        drawText(screenWidth / 2, y, r, g, b, TEXT_CENTER, "#%d %-15s ...... %03d", (i + 1), highscores.highscore[i].name, highscores.highscore[i].score);
 
         y += 50;
     }
 
     if (timeout % 40 < 20)
     {
-        drawText(SCREEN_WIDTH / 2, 600, 255, 255, 255, TEXT_CENTER, "PRESS SPACE TO PLAY!");
+        drawText(screenWidth / 2, 600, 255, 255, 255, TEXT_CENTER, "PRESS SPACE TO PLAY!");
     }
 }
 
@@ -137,16 +137,16 @@ static void drawNameInput()
 {
     SDL_Rect r;
 
-    drawText(SCREEN_WIDTH / 2, 70, 255, 255, 255, TEXT_CENTER, "CONGRATULATIONS, YOU'VE GAINED A HIGHSCORE!");
+    drawText(screenWidth / 2, 70, 255, 255, 255, TEXT_CENTER, "CONGRATULATIONS, YOU'VE GAINED A HIGHSCORE!");
 
-    drawText(SCREEN_WIDTH / 2, 120, 255, 255, 255, TEXT_CENTER, "ENTER YOUR NAME BELOW:");
+    drawText(screenWidth / 2, 120, 255, 255, 255, TEXT_CENTER, "ENTER YOUR NAME BELOW:");
 
-    drawText(SCREEN_WIDTH / 2, 250, 128, 255, 128, TEXT_CENTER, newHighscore->name);
+    drawText(screenWidth / 2, 250, 128, 255, 128, TEXT_CENTER, newHighscore->name);
 
 
     if (cursorBlink < FPS / 2)
     {
-        r.x = ((SCREEN_WIDTH / 2) + (strlen(newHighscore->name) / 2 * GLYPH_WIDTH)) + 5;
+        r.x = ((screenWidth / 2) + (strlen(newHighscore->name) / 2 * GLYPH_WIDTH)) + 5;
         r.y = 250;
         r.w = GLYPH_WIDTH;
         r.h = GLYPH_HEIGHT;
@@ -155,7 +155,7 @@ static void drawNameInput()
         SDL_RenderFillRect(app.renderer, &r);
     }
 
-    drawText(SCREEN_WIDTH / 2, 625, 255, 255, 255, TEXT_CENTER, "PRESS RETURN WHEN FINISHED");
+    drawText(screenWidth / 2, 625, 255, 255, 255, TEXT_CENTER, "PRESS RETURN WHEN FINISHED");
 }
 
 static void draw()

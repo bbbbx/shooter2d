@@ -24,3 +24,5 @@ extern App app;
 extern Stage stage;
 extern struct Star stars[MAX_STARS];
 extern int backgroundX;
+extern int screenWidth;
+extern int screenHeight;

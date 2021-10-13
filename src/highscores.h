@@ -17,3 +17,5 @@ void initHighscores(void);
 Highscores highscores;
 Highscore *newHighscore;
 int cursorBlink = 0;
+extern int screenWidth;
+extern int screenHeight;
