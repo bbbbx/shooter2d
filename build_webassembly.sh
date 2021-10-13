@@ -34,4 +34,5 @@ emcc \
     -s USE_SDL_IMAGE=2 \
     -s SDL2_IMAGE_FORMATS=["png","jpg"] \
     -s EXIT_RUNTIME=1 \
+    -O3 \
     -o web/index.js

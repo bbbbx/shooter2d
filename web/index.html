@@ -1,35 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoot'em Up</title>
-    <style>
-        html, body {
-            margin: 0;
-        }
-        canvas {
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shoot'em Up</title>
+  <style>
+    html, body {
+      margin: 0;
+    }
+    canvas {
+      display: block;
+    }
+
+    .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+    div.emscripten { text-align: center; }
+
+    .spinner {
+      height: 50px;
+      width: 50px;
+      margin: 0px auto;
+      -webkit-animation: rotation .8s linear infinite;
+      -moz-animation: rotation .8s linear infinite;
+      -o-animation: rotation .8s linear infinite;
+      animation: rotation 0.8s linear infinite;
+      border-left: 10px solid white;
+      border-right: 10px solid white;
+      border-bottom: 10px solid white;
+      border-top: 10px solid rgb(127, 184, 67);
+      border-radius: 100%;
+      background-color: white;
+    }
+    @-webkit-keyframes rotation {
+      from {-webkit-transform: rotate(0deg);}
+      to {-webkit-transform: rotate(360deg);}
+    }
+    @-moz-keyframes rotation {
+      from {-moz-transform: rotate(0deg);}
+      to {-moz-transform: rotate(360deg);}
+    }
+    @-o-keyframes rotation {
+      from {-o-transform: rotate(0deg);}
+      to {-o-transform: rotate(360deg);}
+    }
+    @keyframes rotation {
+      from {transform: rotate(0deg);}
+      to {transform: rotate(360deg);}
+    }
+
+    .container {
+      position: fixed;
+      margin: 0 auto;
+      width: 100vw;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <script>
-        const canvas = document.getElementById('canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+  <div class="container">
+    <figure style="overflow:visible;" id="spinner"><div class="spinner"></div></figure>
+    <div class="emscripten" id="status">Downloading...</div>
+    <div class="emscripten">
+      <progress value="0" max="100" id="progress" hidden=1></progress>  
+    </div>
+  </div>
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
+  <canvas id="canvas"></canvas>
+  <script>
+    var statusElement = document.getElementById('status');
+    var progressElement = document.getElementById('progress');
+    var spinnerElement = document.getElementById('spinner');
 
-        var Module = {
-            canvas: canvas,
+    const canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    var Module = {
+      canvas: canvas,
+      setStatus: function(text) {
+        if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+        if (text === Module.setStatus.text) return;
+        var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+        var now = Date.now();
+        if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+        if (m) {
+          text = m[1];
+          progressElement.value = parseInt(m[2])*100;
+          progressElement.max = parseInt(m[4])*100;
+          progressElement.hidden = false;
+          spinnerElement.hidden = false;
+        } else {
+          progressElement.value = null;
+          progressElement.max = null;
+          progressElement.hidden = true;
+          if (!text) spinnerElement.hidden = true;
+        }
+        statusElement.innerText = text;
+      },
+      totalDependencies: 0,
+      monitorRunDependencies: function(left) {
+        this.totalDependencies = Math.max(this.totalDependencies, left);
+        Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+      },
+    };
+    Module.setStatus('Downloading...');
+    window.onerror = function() {
+      Module.setStatus('Exception thrown, see JavaScript console');
+      spinnerElement.style.display = 'none';
+      Module.setStatus = function(text) {
+        if (text) Module.printErr('[post-exception status] ' + text);
+      };
+    };
+
+    function onprogress(event, url) {
+      var loaded = event.loaded;
+      var total = event.total;
+      Module.setStatus('Downloading ' + url + ': ' + (loaded / total * 100).toFixed(2) + '%');
+    }
+
+    function download(url, onprogress) {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'arraybuffer';
+        if (onprogress) {
+          xhr.onprogress = function(event) {
+            onprogress(event, url);
+          };
+        }
+        xhr.onload = function() { resolve(xhr.response); };
+        xhr.onerror = function(e) { reject(e); };
+        xhr.send(null);
+      });
+    }
+
+    function addScriptToDom(scriptCode) {
+      return new Promise(function(resolve, reject) {
+        var script = document.createElement('script');
+        var blob = new Blob([scriptCode], { type: 'application/javascript' });
+        var objectUrl = URL.createObjectURL(blob);
+        script.src = objectUrl;
+        script.onload = function() {
+          console.log('added js script to dom');
+          script.onload = script.onerror = null; // Remove these onload and onerror handlers, because these capture the inputs to the Promise and the input function, which would leak a lot of memory!
+          URL.revokeObjectURL(objectUrl); // Free up the blob. Note that for debugging purposes, this can be useful to comment out to be able to read the sources in debugger.
+          resolve();
+        }
+        script.onerror = function(e) {
+          script.onload = script.onerror = null; // Remove these onload and onerror handlers, because these capture the inputs to the Promise and the input function, which would leak a lot of memory!
+          URL.revokeObjectURL(objectUrl);
+          console.error('script failed to add to dom: ' + e);
+          reject(e.message || "(out of memory?)");
+        }
+        document.body.appendChild(script);
+      });
+    }
+
+    Module.getPreloadedPackage = function(remotePackageName, remotePackageSize) {
+      console.log('Runtime asking for remote package ' + remotePackageName + ', expected size ' + remotePackageSize + 'bytes.');
+      return Module['downloadedData'];
+    };
+
+    var dataDownload = download('index.data', onprogress).then(function(data) {
+      console.log('downloaded data file');
+      Module.manuallyDownloadedData = 1;
+      Module['downloadedData'] = data;
+      var jsDownload = download('index.js', onprogress).then(function(data) {
+        console.log('downloaded js file');
+        addScriptToDom(data);
+
+        var wasm = download('index.wasm', onprogress);
+
+        Module.instantiateWasm = function(imports, successCallback) {
+          console.log('instantiateWasm: instantiating asynchronously');
+          wasm.then(function(wasmBinary) {
+            console.log('wasm download finished, begin instantiating');
+            var wasmInstantiate = WebAssembly.instantiate(new Uint8Array(wasmBinary), imports).then(function(output) {
+              console.log('wasm instantiation succeeded');
+              Module.testWasmInstantiationSucceeded = 1;
+              successCallback(output.instance);
+            }).catch(function(e) {
+              console.log('wasm instantiation failed! ' + e);
+            });
+          });
+          return {}; // Compiling asynchronously, no exports.
         };
-    </script>
-    <script src="index.js"></script>
+      });
+    });
+  </script>
 </body>
 </html>
